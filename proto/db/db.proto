@@ -15,9 +15,10 @@ message Database {
 
 message Record {
 	string id = 1;
-	int64 timestamp = 2;
-	map<string,string> metadata = 3;
-	string bytes = 4;
+	int64 created = 2;
+	int64 updated = 3;
+	map<string,string> metadata = 4;
+	string bytes = 5;
 }
 
 message ReadRequest {

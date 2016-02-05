@@ -25,7 +25,11 @@ to the type of database. It should match one of the supported drivers.
 	```
 
 3. Start one of the supported databases (mysql, elasticsearch, ...) and register with the registry.
+	```
+	Example. Register location of the **foo** database hosted by mysql
 
+	$ micro register service '{"name": "go.micro.db.foo", "version": "0.0.1", "nodes": [{"id": "foo-1", "address": "127.0.0.1", "port": 3306, "metadata": {"driver": "mysql"}}]}'
+	```
 4. Download and start the service
 
 	```shell
@@ -48,3 +52,57 @@ DB
 - Update
 - Delete
 - Search
+
+### DB.Create
+
+```
+micro query go.micro.srv.db DB.Create '{"database": {"name": "foo", "table": "bar"}, "record": {"id": "e7add322-e069-44c2-b920-c4fbfd62e6b5", "metadata": {"key": "value"}}}'
+```
+
+### DB.Read
+
+```
+micro query go.micro.srv.db DB.Read '{"database": {"name": "foo", "table": "bar"}, "id": "e7add322-e069-44c2-b920-c4fbfd62e6b5"}'
+
+{
+	"record": {
+		"created": 1.454704366e+09,
+		"id": "e7add322-e069-44c2-b920-c4fbfd62e6b5",
+		"metadata": {
+			"key": "value"
+		},
+		"updated": 1.454704366e+09
+	}
+}
+```
+
+### DB.Search
+
+```
+micro query go.micro.srv.db DB.Search '{"database": {"name": "foo", "table": "bar"}}'
+
+{
+	"records": [
+		{
+			"created": 1.454704366e+09,
+			"id": "e7add322-e069-44c2-b920-c4fbfd62e6b5",
+			"metadata": {
+				"key": "value"
+			},
+			"updated": 1.454704366e+09
+		}
+	]
+}
+```
+
+### DB.Update
+
+```
+micro query go.micro.srv.db DB.Update '{"database": {"name": "foo", "table": "bar"}, "record": {"id": "e7add322-e069-44c2-b920-c4fbfd62e6b5", "metadata": {"key": "value", "key2": "value2"}}}'
+```
+
+### DB.Delete
+
+```
+micro query go.micro.srv.db DB.Delete '{"database": {"name": "foo", "table": "bar"}, "id": "e7add322-e069-44c2-b920-c4fbfd62e6b5"}'
+```
