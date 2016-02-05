@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+service DB {
+	rpc Read(ReadRequest) returns(ReadResponse) {}
+	rpc Create(CreateRequest) returns(CreateResponse) {}
+	rpc Update(UpdateRequest) returns(UpdateResponse) {}
+	rpc Delete(DeleteRequest) returns(DeleteResponse) {}
+	rpc Search(SearchRequest) returns(SearchResponse) {}
+}
+
+message Database {
+	string name = 1;
+	string table = 2;
+}
+
+message Record {
+	Database database = 1;
+	string id = 2;
+	map<string,string> metadata = 3;
+	string data = 4;
+}
+
+message ReadRequest {
+	Database database = 1;
+	string id = 2;
+}
+
+message ReadResponse {
+	Record record = 1;
+}
+
+message CreateRequest {
+	Record record = 1;
+}
+
+message CreateResponse {
+}
+
+message UpdateRequest {
+	Record record = 1;
+}
+
+message UpdateResponse {
+}
+
+message DeleteRequest {
+	Database database = 1;
+	string id = 2;
+}
+
+message DeleteResponse {
+
+}
+
+message SearchRequest {
+	Database database = 1;
+	map<string,string> metadata = 2;
+	int64 limit = 3;
+	int64 offset = 4;
+}
+
+message SearchResponse {
+	repeated Record records = 1;
+}
