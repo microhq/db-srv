@@ -53,7 +53,7 @@ func (d *DB) Create(ctx context.Context, req *mdb.CreateRequest, rsp *mdb.Create
 		return errors.BadRequest("go.micro.srv.db.DB.Create", "invalid record")
 	}
 
-	if err := validateDB("DB.Create", req.Record.Database); err != nil {
+	if err := validateDB("DB.Create", req.Database); err != nil {
 		return err
 	}
 
@@ -61,7 +61,7 @@ func (d *DB) Create(ctx context.Context, req *mdb.CreateRequest, rsp *mdb.Create
 		return errors.BadRequest("go.micro.srv.db.DB.Create", "invalid id")
 	}
 
-	if err := db.Create(req.Record.Database, req.Record); err != nil {
+	if err := db.Create(req.Database, req.Record); err != nil {
 		return errors.InternalServerError("go.micro.srv.db.DB.Create", err.Error())
 	}
 
@@ -73,7 +73,7 @@ func (d *DB) Update(ctx context.Context, req *mdb.UpdateRequest, rsp *mdb.Update
 		return errors.BadRequest("go.micro.srv.db.DB.Update", "invalid record")
 	}
 
-	if err := validateDB("DB.Update", req.Record.Database); err != nil {
+	if err := validateDB("DB.Update", req.Database); err != nil {
 		return err
 	}
 
@@ -81,7 +81,7 @@ func (d *DB) Update(ctx context.Context, req *mdb.UpdateRequest, rsp *mdb.Update
 		return errors.BadRequest("go.micro.srv.db.DB.Update", "invalid id")
 	}
 
-	if err := db.Update(req.Record.Database, req.Record); err != nil && err == db.ErrNotFound {
+	if err := db.Update(req.Database, req.Record); err != nil && err == db.ErrNotFound {
 		return errors.NotFound("go.micro.srv.db.DB.Update", "not found")
 	} else if err != nil {
 		return errors.InternalServerError("go.micro.srv.db.DB.Update", err.Error())
