@@ -3,7 +3,7 @@
 **Experimental. Run away. RUN AWAY**
 
 The DB server is an experimental proxy layer for backend databases. It allows the platform services to be leveraged 
-as part of the system. Dynamic config, authentication, routing, etc.
+as part of the system. Dynamic config, auth, routing, selector, etc.
 
 ## Getting started
 
