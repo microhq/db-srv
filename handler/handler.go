@@ -121,13 +121,7 @@ func (d *DB) Search(ctx context.Context, req *mdb.SearchRequest, rsp *mdb.Search
 		req.Offset = 0
 	}
 
-	metadata := map[string]interface{}{}
-
-	for k, v := range req.Metadata {
-		metadata[k] = v
-	}
-
-	r, err := db.Search(req.Database, metadata, req.Limit, req.Offset)
+	r, err := db.Search(req.Database, req.Metadata, req.Limit, req.Offset)
 	if err != nil {
 		return errors.InternalServerError("go.micro.srv.db.DB.Search", err.Error())
 	}

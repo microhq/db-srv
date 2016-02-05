@@ -5,7 +5,7 @@ var (
 id varchar(36) primary key,
 created integer,
 updated integer,
-metadata text,
+metadata blob,
 bytes blob,
 index(created),
 index(updated));`

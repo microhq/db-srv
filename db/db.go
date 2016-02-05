@@ -28,7 +28,7 @@ type DB interface {
 	Create(mdb *mdb.Record) error
 	Update(mdb *mdb.Record) error
 	Delete(id string) error
-	Search(md map[string]interface{}, limit, offset int64) ([]*mdb.Record, error)
+	Search(md map[string]string, limit, offset int64) ([]*mdb.Record, error)
 }
 
 type db struct {
@@ -154,7 +154,7 @@ func (d *db) Delete(db *mdb.Database, id string) error {
 	return dr.Delete(id)
 }
 
-func (d *db) Search(db *mdb.Database, md map[string]interface{}, limit, offset int64) ([]*mdb.Record, error) {
+func (d *db) Search(db *mdb.Database, md map[string]string, limit, offset int64) ([]*mdb.Record, error) {
 	dr, err := d.lookup(db)
 	if err != nil {
 		return nil, err
@@ -184,6 +184,6 @@ func Delete(db *mdb.Database, id string) error {
 	return DefaultDB.Delete(db, id)
 }
 
-func Search(db *mdb.Database, md map[string]interface{}, limit, offset int64) ([]*mdb.Record, error) {
+func Search(db *mdb.Database, md map[string]string, limit, offset int64) ([]*mdb.Record, error) {
 	return DefaultDB.Search(db, md, limit, offset)
 }

@@ -10,6 +10,12 @@ to the type of database. It should match one of the supported drivers.
 
 ## Database Drivers
 
+- mysql (mariadb)
+
+future
+- elasticsearch
+- cassandra
+
 ...
 
 ## Getting started

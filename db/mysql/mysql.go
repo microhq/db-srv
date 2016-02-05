@@ -101,6 +101,9 @@ func (d *mysqlDB) Init(mdb *mdb.Database) error {
 		d.queries[query] = prepared
 	}
 
+	d.name = mdb.Name
+	d.table = mdb.Table
+
 	return nil
 }
 
@@ -117,7 +120,7 @@ func (d *mysqlDB) Read(id string) (*mdb.Record, error) {
 	r := &mdb.Record{}
 	row := d.queries["read"].QueryRow(id)
 
-	var meta string
+	var meta []byte
 	if err := row.Scan(&r.Id, &r.Created, &r.Updated, &meta, &r.Bytes); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, db.ErrNotFound
@@ -125,7 +128,7 @@ func (d *mysqlDB) Read(id string) (*mdb.Record, error) {
 		return nil, err
 	}
 
-	if err := json.Unmarshal([]byte(meta), &r.Metadata); err != nil {
+	if err := json.Unmarshal(meta, &r.Metadata); err != nil {
 		return nil, err
 	}
 
@@ -136,15 +139,14 @@ func (d *mysqlDB) Create(r *mdb.Record) error {
 	d.RLock()
 	defer d.RUnlock()
 
-	b, err := json.Marshal(r.Metadata)
+	meta, err := json.Marshal(r.Metadata)
 	if err != nil {
 		return err
 	}
-	meta := string(b)
 	r.Created = time.Now().Unix()
 	r.Updated = time.Now().Unix()
 
-	_, err = d.queries["create"].Exec(r.Id, r.Created, r.Updated, meta, []byte(r.Bytes))
+	_, err = d.queries["create"].Exec(r.Id, r.Created, r.Updated, string(meta), []byte(r.Bytes))
 	return err
 }
 
@@ -152,14 +154,13 @@ func (d *mysqlDB) Update(r *mdb.Record) error {
 	d.RLock()
 	defer d.RUnlock()
 
-	b, err := json.Marshal(r.Metadata)
+	meta, err := json.Marshal(r.Metadata)
 	if err != nil {
 		return err
 	}
-	meta := string(b)
 	r.Updated = time.Now().Unix()
 
-	_, err = d.queries["update"].Exec(r.Updated, meta, []byte(r.Bytes), r.Id)
+	_, err = d.queries["update"].Exec(r.Updated, string(meta), []byte(r.Bytes), r.Id)
 
 	return nil
 }
@@ -171,15 +172,40 @@ func (d *mysqlDB) Delete(id string) error {
 	return err
 }
 
-func (d *mysqlDB) Search(md map[string]interface{}, limit, offset int64) ([]*mdb.Record, error) {
+func (d *mysqlDB) Search(md map[string]string, limit, offset int64) ([]*mdb.Record, error) {
 	d.RLock()
 	defer d.RUnlock()
 
 	var rows *sql.Rows
 	var err error
 
-	// TODO: search with metadata
-	rows, err = d.queries["search"].Query(limit, offset)
+	if len(md) > 0 {
+		// THIS IS SUPER CRUFT
+		// TODO: DONT DO THIS
+		// Note: Tried to use mariadb dynamic columns. They suck.
+		var query string
+		var args []interface{}
+
+		// create statement for each key-val pair
+		for k, v := range md {
+			if len(query) == 0 {
+				query += " "
+			} else {
+				query += "AND metadata like ? "
+			}
+			args = append(args, fmt.Sprintf(`%%"%s":"%s"%%`, k, v))
+		}
+
+		// append limit offset
+		args = append(args, limit, offset)
+		query += " limit ? offset ?"
+		query = fmt.Sprintf(searchMetadataQ, d.name, d.table) + query
+
+		// doe the query
+		rows, err = d.conn.Query(query, args...)
+	} else {
+		rows, err = d.queries["search"].Query(limit, offset)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +215,7 @@ func (d *mysqlDB) Search(md map[string]interface{}, limit, offset int64) ([]*mdb
 
 	for rows.Next() {
 		r := &mdb.Record{}
-		var meta string
+		var meta []byte
 		if err := rows.Scan(&r.Id, &r.Created, &r.Updated, &meta, &r.Bytes); err != nil {
 			if err == sql.ErrNoRows {
 				return nil, db.ErrNotFound
@@ -197,7 +223,7 @@ func (d *mysqlDB) Search(md map[string]interface{}, limit, offset int64) ([]*mdb
 			return nil, err
 		}
 
-		if err := json.Unmarshal([]byte(meta), &r.Metadata); err != nil {
+		if err := json.Unmarshal(meta, &r.Metadata); err != nil {
 			return nil, err
 		}
 		records = append(records, r)
