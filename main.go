@@ -6,11 +6,11 @@ import (
 	"github.com/micro/cli"
 	"github.com/micro/go-micro"
 
-	"github.com/micro/db-srv/db"
-	_ "github.com/micro/db-srv/db/mysql"
-	"github.com/micro/db-srv/handler"
+	"github.com/microhq/db-srv/db"
+	_ "github.com/microhq/db-srv/db/mysql"
+	"github.com/microhq/db-srv/handler"
 
-	proto "github.com/micro/db-srv/proto/db"
+	proto "github.com/microhq/db-srv/proto/db"
 )
 
 func main() {

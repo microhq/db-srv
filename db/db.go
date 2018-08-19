@@ -4,9 +4,9 @@ import (
 	"errors"
 	"strings"
 
-	mdb "github.com/micro/db-srv/proto/db"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/selector"
+	mdb "github.com/microhq/db-srv/proto/db"
 )
 
 // Database Driver

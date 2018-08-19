@@ -39,7 +39,7 @@ future
 4. Download and start the service
 
 	```shell
-	go get github.com/micro/db-srv
+	go get github.com/microhq/db-srv
 	db-srv --database_service_namespace=go.micro.db
 	```
 

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/micro/db-srv/db"
-	mdb "github.com/micro/db-srv/proto/db"
 	"github.com/micro/go-micro/errors"
+	"github.com/microhq/db-srv/db"
+	mdb "github.com/microhq/db-srv/proto/db"
 
 	"golang.org/x/net/context"
 )

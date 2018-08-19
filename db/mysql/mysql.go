@@ -8,9 +8,9 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/micro/db-srv/db"
-	mdb "github.com/micro/db-srv/proto/db"
 	"github.com/micro/go-micro/registry"
+	"github.com/microhq/db-srv/db"
+	mdb "github.com/microhq/db-srv/proto/db"
 )
 
 type mysqlDriver struct{}
